@@ -1,60 +1,110 @@
-# AC Current Sensing Meter
+AC Current Sensing Meter — AVR ATmega32
+This project implements an AC Current Sensing Meter using an ATmega32 microcontroller, a current sensor, a 16x2 LCD, and a rotary encoder for user input.
 
-This Arduino project measures the RMS value of an AC current using an analog current sensor, displays the result on an LCD, and provides error detection for overcurrent conditions.
+The project measures AC RMS current based on ADC readings, compares it to a user-configured "expected" value (in watts), and warns if the current exceeds the limit.
 
-It includes:
-- An LCD (16x2) display for showing current readings and settings.
-- A rotary encoder for adjusting the expected power (watt) value.
-- A master button to start and stop the measurement.
-- LED indicators for system status and overcurrent alerts.
+📦 Project Features
+📟 16x2 LCD Display (4-bit mode) for showing:
 
-## 📚 Features
-- Set expected watt value using a rotary encoder.
-- Measure real-time AC RMS current.
-- Display current and watt values on an LCD screen.
-- Overcurrent detection with warning message and LED alert.
+Watt target
 
-## 🛠 Hardware Requirements
-- Arduino Uno (or compatible board)
-- 16x2 LCD (using LiquidCrystal library)
-- Current sensor (e.g., ACS712 or similar)
-- Rotary encoder with button
-- Push button (Master control)
-- LEDs for status indication
-- Assorted resistors, wires, breadboard
+Measured RMS current
 
-## 📋 Pin Connections
-| Component | Arduino Pin |
-|:----------|:------------|
-| LCD RS    | 10           |
-| LCD Enable| 9            |
-| LCD D4    | 7            |
-| LCD D5    | 6            |
-| LCD D6    | 5            |
-| LCD D7    | 4            |
-| Current Sensor | A3      |
-| DC Bias Sensor | A5      |
-| Rotary CLK | 2 (Interrupt) |
-| Rotary DT | 8           |
-| Rotary Button | 11       |
-| Master Button | 3 (Interrupt) |
-| Status LED | 12 and 13   |
+🎛 Rotary Encoder to set Watt Value easily
 
-## 🚀 How to Use
-1. Upload the code to your Arduino board.
-2. Set the expected watt value using the rotary encoder.
-3. Press the master button to start measuring.
-4. Watch real-time AC current values on the LCD.
-5. If overcurrent is detected, an ERROR message appears, and the LED will blink.
+🔘 Master Button to start measurement
 
-## 🧩 Libraries Used
-- [LiquidCrystal](https://www.arduino.cc/en/Reference/LiquidCrystal)
+⚡ LED Warning when current exceeds expected value
 
-## ⚡ Notes
-- The calibration factor (`expected_current`) is based on 220V mains voltage. Modify it if your system uses a different voltage.
-- You can fine-tune the sensitivity by adjusting the overcurrent threshold in the code.
+🧠 Pure AVR C Code (no Arduino libraries)
 
+🎯 Interrupts for responsive rotary encoder and button handling
 
-### Author
-> Mohamed Gamil
+🔬 Accurate ADC sampling and RMS calculation over multiple cycles
 
+🛠 Hardware Connections
+
+Peripheral	ATmega32 Pin	Notes
+LCD RS	PD4	
+LCD Enable (E)	PD5	
+LCD D4	PD6	
+LCD D5	PD7	
+LCD D6	PC0	Modify if needed
+LCD D7	PC1	Modify if needed
+Rotary Encoder CLK	INT0 (PD2)	External Interrupt 0
+Rotary Encoder DT	PD3	Read manually
+Rotary Encoder Button	PD4	Pulled high internally
+Master Button	INT1 (PD3)	External Interrupt 1
+Current Sensor	ADC3 (PC3)	Analog Read Input
+DC Bias Input	ADC5 (PC5)	Reference voltage
+LED Indicator	PB0	High Current Alarm
+📋 Requirements
+ATmega32 Microcontroller
+
+16x2 LCD (HD44780 compatible)
+
+Rotary Encoder (with push button)
+
+ACS712 / SCT-013 or similar current sensor
+
+220V AC Load (lamp, heater, etc.)
+
+External 5V Power Supply
+
+USBASP or AVR Programmer
+
+avr-gcc / avrdude (for flashing)
+
+🧰 How It Works
+Power on: LCD displays welcome screen.
+
+Set Expected Watt Value using rotary encoder:
+
+Rotate to change digits.
+
+Press encoder button to move between digits.
+
+Press Master Button to start measurement.
+
+Current is sampled and true RMS is calculated.
+
+If measured current exceeds the expected current:
+
+"ERROR: HIGH CURRENT" appears.
+
+LED warning light turns ON.
+
+Otherwise, displays real-time RMS current value.
+
+🚀 Building & Flashing
+bash
+Copy
+Edit
+make clean
+make all
+make flash
+Make sure your Makefile is properly set with your programmer (e.g., USBASP).
+
+Use avrdude to upload .hex to the ATmega32.
+
+🗂 Project Structure
+bash
+Copy
+Edit
+/ac-current-sensor-avr/
+│
+├── main.c        # Main Application Logic
+├── lcd.c         # LCD control functions
+├── lcd.h         # LCD header
+├── Makefile      # Build file
+└── README.md     # Project description
+⚡ Screenshots
+(Optional: insert pictures later if you want to show the LCD in operation.)
+
+✍️ Author
+Written by: Mohamed Gamil
+
+📢 Important Notes
+Make sure to use proper isolation when sensing high AC voltage.
+
+Always be cautious while handling AC mains!
